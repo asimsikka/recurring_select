@@ -58,8 +58,11 @@ module RecurringSelectHelper
         options_array << separator
         options_array << custom_label
       end
-
-      options_for_select(options_array, currently_selected_rule.to_json)
+      if currently_selected_rule == "perpetual"
+        options_for_select(options_array, currently_selected_rule)
+      else
+        options_for_select(options_array, currently_selected_rule.to_json)
+      end
     end
 
     private
