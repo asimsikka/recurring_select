@@ -39,8 +39,16 @@ methods =
     @.trigger "recurring_select:save"
 
   current_rule: ->
-    str:  @data("initial-value-str")
-    hash: $.parseJSON(@data("initial-value-hash"))
+    if @data('initial-value-hash') != 'perpetual'
+      {
+        str: @data('initial-value-str')
+        hash: $.parseJSON(@data('initial-value-hash'))
+      }
+    else
+      {
+        str: @data('initial-value-str')
+        hash: @data('initial-value-hash')
+      }
 
   cancel: ->
     @val @data("initial-value-hash")
