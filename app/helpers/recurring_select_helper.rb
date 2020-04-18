@@ -30,9 +30,10 @@ module RecurringSelectHelper
       blank_option_label = options[:blank_label] || I18n.t("recurring_select.not_recurring")
       blank_option = [blank_option_label, "null"]
       separator = [I18n.t("recurring_select.or"), {:disabled => true}]
-
+      original_default_schedules = default_schedules
+      default_schedules = default_schedules.reject{|a| a[1] == 'perpetual'}
       if default_schedules.blank?
-        if currently_selected_rule.present?
+        if currently_selected_rule.present? && currently_selected_rule != 'perpetual'
           options_array << ice_cube_rule_to_option(currently_selected_rule)
           options_array << separator
           options_array << [I18n.t("recurring_select.change_schedule"), "custom"]
@@ -47,7 +48,6 @@ module RecurringSelectHelper
         options_array += default_schedules.collect{|dc|
           ice_cube_rule_to_option(dc)
         }
-
         if currently_selected_rule.present? and !current_rule_in_defaults?(currently_selected_rule, default_schedules)
           options_array << ice_cube_rule_to_option(currently_selected_rule, true)
           custom_label = [I18n.t("recurring_select.new_custom_schedule"), "custom"]
@@ -58,7 +58,13 @@ module RecurringSelectHelper
         options_array << separator
         options_array << custom_label
       end
-      if currently_selected_rule == "perpetual"
+      perpetual_default_schedules = original_default_schedules.select{|a| a[1] == 'perpetual'}
+      if perpetual_default_schedules.length > 0
+        options_array += perpetual_default_schedules.collect{|dc|
+          ice_cube_rule_to_option(dc)
+        }
+      end
+      if currently_selected_rule == 'perpetual'
         options_for_select(options_array, currently_selected_rule)
       else
         options_for_select(options_array, currently_selected_rule.to_json)
