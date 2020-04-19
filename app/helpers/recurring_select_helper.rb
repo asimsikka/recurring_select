@@ -31,7 +31,7 @@ module RecurringSelectHelper
       blank_option = [blank_option_label, "null"]
       separator = [I18n.t("recurring_select.or"), {:disabled => true}]
       original_default_schedules = default_schedules
-      default_schedules = default_schedules.reject{|a| a[1] == 'perpetual'}
+      default_schedules = default_schedules.to_a.reject{|a| a[1] == 'perpetual'}
       if default_schedules.blank?
         if currently_selected_rule.present? && currently_selected_rule != 'perpetual'
           options_array << ice_cube_rule_to_option(currently_selected_rule)
